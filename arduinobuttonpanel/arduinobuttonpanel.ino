@@ -1,4 +1,4 @@
-// v1.0 by @pato_pitaluga patricio.pitaluga@gmail.com
+// v1.0.1 by @pato_pitaluga patricio.pitaluga@gmail.com
 // To set up your own behavior, change the cases of outputAction function.
 
 #include "Keyboard.h"
@@ -13,7 +13,7 @@ boolean longPressing[] = {false, false, false, false, false, false, false, false
 
 long lastDebounceTime[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-long debounceDelay = 50;
+long debounceDelay = 20;
 
 int keyComb(char key1 = 0, char key2 = 0, char key3 = 0, char key4 = 0) {
   if (key1 != 0) { Keyboard.press(key1); }
@@ -144,41 +144,42 @@ void loop() {
     // LOW  = state 0 <- button pressed
 
     // On longer press
-    if ((startedPressing[thisPin] != 0) && ((millis() - startedPressing[thisPin]) > 1200)) {
+    if ((startedPressing[thisPin] == 0) || ((millis() - startedPressing[thisPin]) <= 1200)) {
 
-      outputAction(thisPin, 4);
-      longPressing[thisPin] = true;
-      startedPressing[thisPin] = 0;
+      if (((buttonState[thisPin] != prevButtonState[thisPin])) && ((millis() - lastDebounceTime[thisPin]) > debounceDelay)) {
+
+        if (buttonState[thisPin] == 0) {
+          startedPressing[thisPin] = millis();
+          // Standard action
+
+          outputAction(thisPin, 1);
+          //Keyboard.print("pressed");
+        } else {
+
+          if (!longPressing[thisPin]) {
+            if ((millis() - startedPressing[thisPin]) < 500) {
+              // On release (to avoid standard action if is incompatible with Long or Longer action)
+              outputAction(thisPin, 2);              
+              //Keyboard.print("released");
+            } else {
+              // Long action (+standard action already sent)
+              outputAction(thisPin, 3);
+              //Keyboard.print("long");
+            }
+          }
+
+          startedPressing[thisPin] = 0;
+          longPressing[thisPin] = false;
+        }
+        lastDebounceTime[thisPin] = millis();
+      }
     } else {
 
-      if ((buttonState[thisPin] != prevButtonState[thisPin])) {
-        if ((millis() - lastDebounceTime[thisPin]) > debounceDelay) {
-  
-          if (buttonState[thisPin] == 0) {
-            // Button pressed
-  
-            startedPressing[thisPin] = millis();
-            // Standard action
-            outputAction(thisPin, 1);
-          } else {
-            // Button released
-  
-            if (!longPressing[thisPin]) {
-              if ((millis() - startedPressing[thisPin]) < 500) {
-                // On release (to avoid standard action if is incompatible with Long or Longer action)
-                outputAction(thisPin, 2);              
-              } else {
-                // Long action (+standard action already sent)
-                outputAction(thisPin, 3);
-              }
-            }
-  
-            startedPressing[thisPin] = 0;
-            longPressing[thisPin] = false;
-          }
-          lastDebounceTime[thisPin] = millis();
-        }
-      }
+      //Keyboard.print("lingering");
+      outputAction(thisPin, 4);
+      
+      longPressing[thisPin] = true;
+      startedPressing[thisPin] = 0;
     }
 
     prevButtonState[thisPin] = buttonState[thisPin];
