@@ -6,12 +6,18 @@
 const int buttonPin[] = {2, 3, 4, 5, 6, 7, 8, 9};
 int pinCount = 8;
 
+int potPin = 2;
+int prevPotState = -1;
+int potState = -1;
+int potTolerance = 1;
+long potDebounceDelay = 20;
+
 int buttonState[] = {1, 1, 1, 1, 1, 1, 1, 1};
 int prevButtonState[] = {HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH, HIGH};
 long startedPressing[] = {0, 0, 0, 0, 0, 0, 0, 0};
 boolean longPressing[] = {false, false, false, false, false, false, false, false};
 
-long lastDebounceTime[] = {0, 0, 0, 0, 0, 0, 0, 0};
+long lastDebounceTime[] = {0, 0, 0, 0, 0, 0, 0, 0, 0}; // 1 more for the pot
 
 long debounceDelay = 20;
 
@@ -184,6 +190,21 @@ void loop() {
 
     prevButtonState[thisPin] = buttonState[thisPin];
   }
-}
+  // The pot
+  int thisPin = pinCount; // To consider it the last one in the lastDebounceTime array
+  potState = (int) (analogRead(potPin)/5);
+  if (prevPotState == -1) { prevPotState = potState; }
+  if (((potState > prevPotState + potTolerance) || (potState < prevPotState - potTolerance)) 
+    && ((millis() - lastDebounceTime[thisPin]) > potDebounceDelay)
+    ) {
 
+    if (potState > prevPotState) {
+      keyComb(KEY_UP_ARROW);
+    } else {
+      keyComb(KEY_DOWN_ARROW);
+    }
+    lastDebounceTime[thisPin] = millis();
+    prevPotState = potState;
+  }
+}
 
