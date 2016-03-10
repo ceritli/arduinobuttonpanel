@@ -159,18 +159,18 @@ void loop() {
           // Standard action
 
           outputAction(thisPin, 1);
-          //Keyboard.print("pressed");
+          //Keyboard.print(thisPin); // for testing
         } else {
 
           if (!longPressing[thisPin]) {
             if ((millis() - startedPressing[thisPin]) < 500) {
               // On release (to avoid standard action if is incompatible with Long or Longer action)
-              outputAction(thisPin, 2);              
-              //Keyboard.print("released");
+              outputAction(thisPin, 2);
+              //Keyboard.print("released"); // for testing
             } else {
               // Long action (+standard action already sent)
               outputAction(thisPin, 3);
-              //Keyboard.print("long");
+              //Keyboard.print("long"); // for testing
             }
           }
 
