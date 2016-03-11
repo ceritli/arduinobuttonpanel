@@ -19,7 +19,9 @@ boolean longPressing[] = {false, false, false, false, false, false, false, false
 
 long lastDebounceTime[] = {0, 0, 0, 0, 0, 0, 0, 0, 0}; // 1 more for the pot
 
-long debounceDelay = 20;
+long debounceDelay = 0;
+
+boolean testHardware = false;
 
 int keyComb(char key1 = 0, char key2 = 0, char key3 = 0, char key4 = 0) {
   if (key1 != 0) { Keyboard.press(key1); }
@@ -41,95 +43,116 @@ int outputAction(int currentButton, int typeOfPress = 0) {
   // typeOfPress 1: on push; 2: on release; 3: on long press; 4: on lingering press.
   // actions on release, on long press and lingering press include the action press. Action lingering press cancels action release and long press.
 
-  if (currentButton + 1 == 1) {
+  if (testHardware) {
+    Keyboard.print(currentButton + 1);
     if (typeOfPress == 1) {
-      keyComb(KEY_LEFT_GUI, 'c');
+      Keyboard.print(" pressed ");
     }
-    if (typeOfPress == 3) {
-      keyComb(KEY_LEFT_GUI, 'f');
-    }
-    if (typeOfPress == 4) {
-      keyComb(KEY_LEFT_GUI, KEY_LEFT_SHIFT, 'f');
-    }
-  }
-
-  if (currentButton + 1 == 2) {
-    if (typeOfPress == 1) {
-      keyComb(KEY_LEFT_GUI, 'v');
-    }
-    if ((typeOfPress == 3) || (typeOfPress == 4)) {
-      keyComb(KEY_RETURN);
-    }
-  }
-
-  if (currentButton + 1 == 3) {
-    if (typeOfPress == 1) {
-      keyComb(KEY_RETURN);
-    }
-    if ((typeOfPress == 3) || (typeOfPress == 4)) {
-      keyComb(KEY_BACKSPACE);
-      keyComb(KEY_LEFT_GUI, KEY_LEFT_SHIFT, 'd');
-    }
-  }
-
-  if (currentButton + 1 == 4) {
     if (typeOfPress == 2) {
-      keyComb(KEY_LEFT_GUI, 's');
+      Keyboard.print(" released ");
     }
     if (typeOfPress == 3) {
-      keyComb(KEY_LEFT_GUI, KEY_LEFT_SHIFT, 's');
+      Keyboard.print(" long ");
     }
     if (typeOfPress == 4) {
-      keyComb(KEY_LEFT_GUI, KEY_LEFT_SHIFT, KEY_LEFT_ALT, 's');
+      Keyboard.print(" lingering ");
     }
-  }
+    Keyboard.print(millis());
+    Keyboard.print(" ");
+    Keyboard.print(lastDebounceTime[currentButton]);
+    keyComb(KEY_RETURN);
+  } else {
 
-  if (currentButton + 1 == 5) {
-    if (typeOfPress == 1) {
-      keyComb(KEY_LEFT_GUI, KEY_LEFT_SHIFT, KEY_LEFT_CTRL, '3');
+    if (currentButton + 1 == 1) {
+      if (typeOfPress == 1) {
+        keyComb(KEY_LEFT_GUI, 'c');
+      }
+      if (typeOfPress == 3) {
+        keyComb(KEY_LEFT_GUI, 'f');
+      }
+      if (typeOfPress == 4) {
+        keyComb(KEY_LEFT_GUI, KEY_LEFT_SHIFT, 'f');
+      }
     }
-    if ((typeOfPress == 3) || (typeOfPress == 4)) {
-      keyComb(KEY_LEFT_GUI, ' ');
-      sendLine("photoshop");
+  
+    if (currentButton + 1 == 2) {
+      if (typeOfPress == 1) {
+        keyComb(KEY_LEFT_GUI, 'v');
+      }
+      if ((typeOfPress == 3) || (typeOfPress == 4)) {
+        keyComb(KEY_RETURN);
+      }
     }
-  }
-
-  if (currentButton + 1 == 6) {
-    if (typeOfPress == 2) {
-      keyComb(KEY_LEFT_GUI, 'n');
+  
+    if (currentButton + 1 == 3) {
+      if (typeOfPress == 1) {
+        keyComb(KEY_RETURN);
+      }
+      if ((typeOfPress == 3) || (typeOfPress == 4)) {
+        keyComb(KEY_BACKSPACE);
+        keyComb(KEY_LEFT_GUI, KEY_LEFT_SHIFT, 'd');
+      }
     }
-    if (typeOfPress == 3) {
-      keyComb(KEY_LEFT_GUI, 'n');
-      keyComb(KEY_RETURN);
+  
+    if (currentButton + 1 == 4) {
+      if (typeOfPress == 2) {
+        keyComb(KEY_LEFT_GUI, 's');
+      }
+      if (typeOfPress == 3) {
+        keyComb(KEY_LEFT_GUI, KEY_LEFT_SHIFT, 's');
+      }
+      if (typeOfPress == 4) {
+        keyComb(KEY_LEFT_GUI, KEY_LEFT_SHIFT, KEY_LEFT_ALT, 's');
+      }
     }
-    if (typeOfPress == 4) {
-      keyComb(KEY_LEFT_GUI, 'w');
+  
+    if (currentButton + 1 == 5) {
+      if (typeOfPress == 1) {
+        keyComb(KEY_LEFT_GUI, KEY_LEFT_SHIFT, KEY_LEFT_CTRL, '3');
+      }
+      if ((typeOfPress == 3) || (typeOfPress == 4)) {
+        keyComb(KEY_LEFT_GUI, ' ');
+        sendLine("photoshop");
+      }
     }
-  }
-
-  if (currentButton + 1 == 7) {
-    if (typeOfPress == 1) {
-      keyComb(KEY_DOWN_ARROW);
-      keyComb(KEY_LEFT_GUI, KEY_RIGHT_ARROW);
+  
+    if (currentButton + 1 == 6) {
+      if (typeOfPress == 2) {
+        keyComb(KEY_LEFT_GUI, 'n');
+      }
+      if (typeOfPress == 3) {
+        keyComb(KEY_LEFT_GUI, 'n');
+        keyComb(KEY_RETURN);
+      }
+      if (typeOfPress == 4) {
+        keyComb(KEY_LEFT_GUI, 'w');
+      }
     }
-    if (typeOfPress == 3) {
-      keyComb(KEY_DOWN_ARROW);
-      keyComb(KEY_LEFT_GUI, KEY_RIGHT_ARROW);
+  
+    if (currentButton + 1 == 7) {
+      if (typeOfPress == 1) {
+        keyComb(KEY_DOWN_ARROW);
+        keyComb(KEY_LEFT_GUI, KEY_RIGHT_ARROW);
+      }
+      if (typeOfPress == 3) {
+        keyComb(KEY_DOWN_ARROW);
+        keyComb(KEY_LEFT_GUI, KEY_RIGHT_ARROW);
+      }
+      if (typeOfPress == 4) {
+        keyComb(KEY_DOWN_ARROW);
+        keyComb(KEY_LEFT_GUI, KEY_RIGHT_ARROW);
+      }
     }
-    if (typeOfPress == 4) {
-      keyComb(KEY_DOWN_ARROW);
-      keyComb(KEY_LEFT_GUI, KEY_RIGHT_ARROW);
-    }
-  }
-
-  if (currentButton + 1 == 8) {
-    if (typeOfPress == 1) {
-      keyComb(KEY_LEFT_GUI, ' ');
-      sendLine("https://www.youtube.com/watch?v=dQw4w9WgXcQ"); // Rickroll
-    }
-    if ((typeOfPress == 3) || (typeOfPress == 4)) {
-      keyComb(KEY_LEFT_GUI, ' ');
-      sendLine("https://www.youtube.com/watch?v=uxpDa-c-4Mc"); // Hotline bling
+  
+    if (currentButton + 1 == 8) {
+      if (typeOfPress == 1) {
+        keyComb(KEY_LEFT_GUI, ' ');
+        sendLine("https://www.youtube.com/watch?v=dQw4w9WgXcQ"); // Rickroll
+      }
+      if ((typeOfPress == 3) || (typeOfPress == 4)) {
+        keyComb(KEY_LEFT_GUI, ' ');
+        sendLine("https://www.youtube.com/watch?v=uxpDa-c-4Mc"); // Hotline bling
+      }
     }
   }
 }
@@ -152,25 +175,23 @@ void loop() {
     // On longer press
     if ((startedPressing[thisPin] == 0) || ((millis() - startedPressing[thisPin]) <= 1200)) {
 
-      if (((buttonState[thisPin] != prevButtonState[thisPin])) && ((millis() - lastDebounceTime[thisPin]) > debounceDelay)) {
+      // Debouncing not working properly with current hardware
+      //if (((buttonState[thisPin] != prevButtonState[thisPin])) && ((millis() - lastDebounceTime[thisPin]) > debounceDelay)) {
+      if ((buttonState[thisPin] != prevButtonState[thisPin])) {
 
         if (buttonState[thisPin] == 0) {
+          // Standard press action
           startedPressing[thisPin] = millis();
-          // Standard action
-
           outputAction(thisPin, 1);
-          //Keyboard.print(thisPin); // for testing
         } else {
 
           if (!longPressing[thisPin]) {
             if ((millis() - startedPressing[thisPin]) < 500) {
               // On release (to avoid standard action if is incompatible with Long or Longer action)
               outputAction(thisPin, 2);
-              //Keyboard.print("released"); // for testing
             } else {
               // Long action (+standard action already sent)
               outputAction(thisPin, 3);
-              //Keyboard.print("long"); // for testing
             }
           }
 
@@ -180,8 +201,6 @@ void loop() {
         lastDebounceTime[thisPin] = millis();
       }
     } else {
-
-      //Keyboard.print("lingering");
       outputAction(thisPin, 4);
       
       longPressing[thisPin] = true;
